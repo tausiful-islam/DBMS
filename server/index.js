@@ -15,7 +15,10 @@ const PORT = process.env.PORT || 5000;
 // Security middleware
 app.use(helmet());
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:3000',
+  origin: [
+    'https://your-frontend.vercel.app',  // Will update after frontend deployment
+    'http://localhost:3000'
+  ],
   credentials: true
 }));
 
