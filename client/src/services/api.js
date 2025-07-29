@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://your-backend.vercel.app/api'  // Will update after backend deployment
+  ? 'https://meat-supply-server-4afk3ky53-tausifs-projects-09c070a6.vercel.app/api'  // Your deployed backend
   : 'http://localhost:5000/api';
 
 const api = axios.create({

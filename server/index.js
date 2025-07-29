@@ -16,7 +16,7 @@ const PORT = process.env.PORT || 5000;
 app.use(helmet());
 app.use(cors({
   origin: [
-    'https://your-frontend.vercel.app',  // Will update after frontend deployment
+    'https://meat-supply-server-4afk3ky53-tausifs-projects-09c070a6.vercel.app',  // Frontend domain
     'http://localhost:3000'
   ],
   credentials: true
