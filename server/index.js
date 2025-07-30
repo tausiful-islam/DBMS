@@ -42,6 +42,10 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/meatmarke
 .catch(err => console.error('MongoDB connection error:', err));
 
 // Routes
+app.get('/', (req, res) => {
+  res.json({ message: 'Meat Market API Server', status: 'running', timestamp: new Date().toISOString() });
+});
+
 app.use('/api/auth', authRoutes);
 app.use('/api/data', dataRoutes);
 app.use('/api/analytics', analyticsRoutes);
@@ -65,8 +69,12 @@ app.use('*', (req, res) => {
   res.status(404).json({ message: 'Route not found' });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// For local development
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
 
+// Export for Vercel serverless
 module.exports = app;
