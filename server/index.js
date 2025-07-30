@@ -13,9 +13,11 @@ const app = express();
 // Basic CORS middleware
 app.use(cors({
   origin: [
-    'https://meat-supply-server-mxnqggf28-tausifs-projects-09c070a6.vercel.app',  // Backend domain
+    'https://meat-supply-server-ee21wvui0-tausifs-projects-09c070a6.vercel.app',  // Latest backend domain
+    'https://meat-market-frontend-q7oh2cz8b-tausifs-projects-09c070a6.vercel.app',  // Current frontend
+    'https://meat-market-frontend-a5qj5xu3v-tausifs-projects-09c070a6.vercel.app',  // Previous frontend
     'http://localhost:3000',  // Local development
-    'https://*.vercel.app'  // Allow all Vercel apps for frontend
+    /https:\/\/.*\.vercel\.app$/  // Regex pattern for all Vercel apps
   ],
   credentials: true
 }));
