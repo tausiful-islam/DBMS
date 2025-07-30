@@ -138,6 +138,89 @@ app.post('/api/auth/demo-login', (req, res) => {
   });
 });
 
+// Simple data endpoints for demo (without external route files to avoid deployment issues)
+app.get('/api/data', (req, res) => {
+  const token = req.header('Authorization')?.replace('Bearer ', '');
+  
+  if (!token || !token.startsWith('demo-token-')) {
+    return res.status(401).json({ message: 'Access denied' });
+  }
+  
+  // Sample data for demo
+  const sampleData = [
+    {
+      _id: '1',
+      productName: 'Beef',
+      area: 'Dhaka',
+      quantity: 100,
+      pricePerUnit: 450,
+      totalSellingPrice: 45000,
+      createdAt: new Date().toISOString()
+    },
+    {
+      _id: '2', 
+      productName: 'Chicken',
+      area: 'Chittagong',
+      quantity: 200,
+      pricePerUnit: 200,
+      totalSellingPrice: 40000,
+      createdAt: new Date().toISOString()
+    },
+    {
+      _id: '3',
+      productName: 'Mutton',
+      area: 'Sylhet', 
+      quantity: 50,
+      pricePerUnit: 650,
+      totalSellingPrice: 32500,
+      createdAt: new Date().toISOString()
+    }
+  ];
+  
+  res.json({
+    data: sampleData,
+    pagination: {
+      currentPage: 1,
+      totalPages: 1,
+      totalItems: 3,
+      hasNext: false,
+      hasPrev: false
+    }
+  });
+});
+
+app.get('/api/analytics/dashboard', (req, res) => {
+  const token = req.header('Authorization')?.replace('Bearer ', '');
+  
+  if (!token || !token.startsWith('demo-token-')) {
+    return res.status(401).json({ message: 'Access denied' });
+  }
+  
+  // Sample analytics data for demo
+  res.json({
+    totalEntries: 3,
+    totalSupply: 350,
+    avgPrice: 433.33,
+    totalMarketValue: 117500,
+    avgSellingPrice: 39166.67,
+    monthlyTrends: [
+      { month: 'Jan', supply: 300, avgPrice: 400 },
+      { month: 'Feb', supply: 350, avgPrice: 420 },
+      { month: 'Mar', supply: 380, avgPrice: 450 }
+    ],
+    areaDistribution: [
+      { area: 'Dhaka', count: 1, percentage: 33.3 },
+      { area: 'Chittagong', count: 1, percentage: 33.3 },
+      { area: 'Sylhet', count: 1, percentage: 33.3 }
+    ],
+    productDistribution: [
+      { product: 'Beef', count: 1, percentage: 33.3 },
+      { product: 'Chicken', count: 1, percentage: 33.3 },
+      { product: 'Mutton', count: 1, percentage: 33.3 }
+    ]
+  });
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
