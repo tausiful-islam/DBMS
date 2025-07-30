@@ -155,13 +155,16 @@ app.get('/api/analytics/dashboard', (req, res) => {
     return res.status(401).json({ message: 'Access denied' });
   }
   
-  // Sample analytics data for demo
+  // Sample analytics data for demo - formatted to match frontend expectations
   res.json({
-    totalEntries: 3,
-    totalSupply: 350,
-    avgPrice: 433.33,
-    totalMarketValue: 117500,
-    avgSellingPrice: 39166.67,
+    summary: {
+      totalEntries: 3,
+      totalSupply: 350,
+      avgPrice: 433.33,
+      totalMarketValue: 117500,
+      avgSellingPrice: 39166.67,
+      productTypes: 3
+    },
     monthlyTrends: [
       { month: 'Jan', supply: 300, avgPrice: 400 },
       { month: 'Feb', supply: 350, avgPrice: 420 },
@@ -176,6 +179,35 @@ app.get('/api/analytics/dashboard', (req, res) => {
       { product: 'Beef', count: 1, percentage: 33.3 },
       { product: 'Chicken', count: 1, percentage: 33.3 },
       { product: 'Mutton', count: 1, percentage: 33.3 }
+    ],
+    recentEntries: [
+      {
+        _id: '1',
+        productName: 'Beef',
+        area: 'Dhaka',
+        quantity: 100,
+        pricePerUnit: 450,
+        totalSellingPrice: 45000,
+        createdAt: new Date().toISOString()
+      },
+      {
+        _id: '2', 
+        productName: 'Chicken',
+        area: 'Chittagong',
+        quantity: 200,
+        pricePerUnit: 200,
+        totalSellingPrice: 40000,
+        createdAt: new Date().toISOString()
+      },
+      {
+        _id: '3',
+        productName: 'Mutton',
+        area: 'Sylhet', 
+        quantity: 50,
+        pricePerUnit: 650,
+        totalSellingPrice: 32500,
+        createdAt: new Date().toISOString()
+      }
     ]
   });
 });
