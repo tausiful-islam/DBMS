@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import api from '../services/api';
 import toast from 'react-hot-toast';
+import { resetErrorHandler } from '../utils/errorHandler';
 
 const AuthContext = createContext();
 
@@ -68,25 +69,47 @@ export const AuthProvider = ({ children }) => {
         // Set authorization header
         api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         
-        // Verify token is still valid
-        const response = await api.get('/auth/me');
+        // For demo tokens, we can validate them locally
+        if (token.startsWith('demo-token-')) {
+          // Demo token format: demo-token-{userId}-{timestamp}
+          const parts = token.split('-');
+          if (parts.length >= 3) {
+            const userId = parts[2];
+            const demoUsers = [
+              { id: '1', name: 'Test User', email: 'test@test.com', role: 'user' },
+              { id: '2', name: 'Admin User', email: 'mdmasudul1979@gmail.com', role: 'admin' }
+            ];
+            const user = demoUsers.find(u => u.id === userId);
+            if (user) {
+              dispatch({ type: 'SET_USER', payload: user });
+              dispatch({ type: 'SET_LOADING', payload: false });
+              return;
+            }
+          }
+        }
         
-        if (response.data && response.data.user) {
-          dispatch({ type: 'SET_USER', payload: response.data.user });
-        } else {
-          // Invalid response, clear auth
+        // For regular tokens, try to verify with backend (silently fail)
+        try {
+          const response = await api.get('/auth/me');
+          if (response.data && response.data.user) {
+            dispatch({ type: 'SET_USER', payload: response.data.user });
+          } else {
+            throw new Error('Invalid response');
+          }
+        } catch (error) {
+          // Silently clear invalid tokens without showing errors
           localStorage.removeItem('token');
           delete api.defaults.headers.common['Authorization'];
           dispatch({ type: 'LOGOUT' });
         }
       } catch (error) {
-        console.error('Auth check failed:', error);
-        // Token is invalid or expired
+        // Silently clear invalid tokens without showing errors
         localStorage.removeItem('token');
         delete api.defaults.headers.common['Authorization'];
         dispatch({ type: 'LOGOUT' });
-        toast.error('Session expired. Please login again.');
       }
+      
+      dispatch({ type: 'SET_LOADING', payload: false });
     };
 
     checkAuth();
@@ -101,6 +124,9 @@ export const AuthProvider = ({ children }) => {
       api.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
       dispatch({ type: 'LOGIN_SUCCESS', payload: response.data });
       
+      // Reset error handler after successful login
+      resetErrorHandler();
+      
       toast.success('Login successful!');
       return { success: true };
     } catch (error) {
@@ -110,6 +136,9 @@ export const AuthProvider = ({ children }) => {
         
         api.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
         dispatch({ type: 'LOGIN_SUCCESS', payload: response.data });
+        
+        // Reset error handler after successful login
+        resetErrorHandler();
         
         toast.success('Login successful!');
         return { success: true };

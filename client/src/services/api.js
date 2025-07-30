@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://meat-supply-server-558uafd94-tausifs-projects-09c070a6.vercel.app/api'  // Latest backend with demo login
+  ? 'https://meat-supply-server-jdn2cbmjs-tausifs-projects-09c070a6.vercel.app/api'  // Latest working backend API
   : 'http://localhost:5000/api';
 
 const api = axios.create({
@@ -30,11 +30,17 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    // Only redirect on 401 if we're not on the landing page or login page
     if (error.response?.status === 401) {
-      // Token expired or invalid
-      localStorage.removeItem('token');
-      delete api.defaults.headers.common['Authorization'];
-      window.location.href = '/login';
+      const currentPath = window.location.pathname;
+      const isPublicPage = ['/', '/login', '/register'].includes(currentPath);
+      
+      if (!isPublicPage) {
+        // Token expired or invalid, only redirect if we're in a protected area
+        localStorage.removeItem('token');
+        delete api.defaults.headers.common['Authorization'];
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }

@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { initializeErrorHandler } from './utils/errorHandler';
 
 // Components
 import Navbar from './components/Navbar';
+import ErrorBoundary from './components/ErrorBoundary';
 import LandingPage from './pages/LandingPage';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -48,22 +50,28 @@ const PublicRoute = ({ children }) => {
 };
 
 function App() {
+  // Initialize error handler on app start
+  useEffect(() => {
+    initializeErrorHandler();
+  }, []);
+
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <AuthProvider>
-          <Router>
-            <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
-              <Toaster
-                position="top-right"
-                toastOptions={{
-                  duration: 4000,
-                  style: {
-                    background: 'var(--toast-bg)',
-                    color: 'var(--toast-color)',
-                  },
-                }}
-              />
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider>
+          <AuthProvider>
+            <Router>
+              <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
+                <Toaster
+                  position="top-right"
+                  toastOptions={{
+                    duration: 4000,
+                    style: {
+                      background: 'var(--toast-bg)',
+                      color: 'var(--toast-color)',
+                    },
+                  }}
+                />
               
               <Routes>
                 {/* Public Routes */}
@@ -78,49 +86,42 @@ function App() {
                     <Register />
                   </PublicRoute>
                 } />
-                
+
                 {/* Protected Routes */}
                 <Route path="/dashboard" element={
                   <ProtectedRoute>
-                    <div className="flex flex-col min-h-screen">
+                    <>
                       <Navbar />
-                      <main className="flex-1">
-                        <Dashboard />
-                      </main>
-                    </div>
+                      <Dashboard />
+                    </>
                   </ProtectedRoute>
                 } />
-                
-                <Route path="/data-table" element={
+                <Route path="/data" element={
                   <ProtectedRoute>
-                    <div className="flex flex-col min-h-screen">
+                    <>
                       <Navbar />
-                      <main className="flex-1">
-                        <DataTable />
-                      </main>
-                    </div>
+                      <DataTable />
+                    </>
                   </ProtectedRoute>
                 } />
-                
                 <Route path="/analytics" element={
                   <ProtectedRoute>
-                    <div className="flex flex-col min-h-screen">
+                    <>
                       <Navbar />
-                      <main className="flex-1">
-                        <Analytics />
-                      </main>
-                    </div>
+                      <Analytics />
+                    </>
                   </ProtectedRoute>
                 } />
-                
-                {/* Catch-all route */}
+
+                {/* Catch all route */}
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
-            </div>
-          </Router>
-        </AuthProvider>
-      </ThemeProvider>
-    </QueryClientProvider>
+              </div>
+            </Router>
+          </AuthProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
 
