@@ -3,8 +3,10 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
 
-// Import auth routes only
+// Import routes
 const authRoutes = require('./routes/auth');
+const dataRoutes = require('./routes/data');
+const analyticsRoutes = require('./routes/analytics');
 
 const app = express();
 
@@ -38,6 +40,8 @@ app.get('/', (req, res) => {
 
 // API Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/data', dataRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -51,6 +55,44 @@ app.get('/api/health', (req, res) => {
       data: 'enabled', 
       analytics: 'enabled'
     }
+  });
+});
+
+// Test data endpoint without auth for debugging
+app.get('/api/data/test', (req, res) => {
+  res.json({ 
+    message: 'Data routes are working',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Test analytics endpoint without auth for debugging  
+app.get('/api/analytics/test', (req, res) => {
+  res.json({ 
+    message: 'Analytics routes are working',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Demo credentials endpoint
+app.get('/api/demo-credentials', (req, res) => {
+  res.json({
+    message: 'Demo Login Credentials',
+    credentials: [
+      {
+        type: 'Test User',
+        email: 'test@test.com',
+        password: 'test123',
+        role: 'user'
+      },
+      {
+        type: 'Admin User', 
+        email: 'mdmasudul1979@gmail.com',
+        password: 'admin123',
+        role: 'admin'
+      }
+    ],
+    note: 'Use these credentials to test the login functionality'
   });
 });
 
@@ -96,7 +138,7 @@ app.post('/api/auth/demo-login', (req, res) => {
   });
 });
 
-// Demo data endpoint for dashboard
+// Simple data endpoints for demo (without external route files to avoid deployment issues)
 app.get('/api/data', (req, res) => {
   const token = req.header('Authorization')?.replace('Bearer ', '');
   
@@ -147,7 +189,6 @@ app.get('/api/data', (req, res) => {
   });
 });
 
-// Demo analytics endpoint for dashboard
 app.get('/api/analytics/dashboard', (req, res) => {
   const token = req.header('Authorization')?.replace('Bearer ', '');
   
@@ -183,8 +224,16 @@ app.get('/api/analytics/dashboard', (req, res) => {
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({ message: 'Something went wrong!' });
+  res.status(500).json({ 
+    message: 'Something went wrong!',
+    error: process.env.NODE_ENV === 'development' ? err.message : 'Internal Server Error'
+  });
 });
 
-// For Vercel serverless function
+// 404 handler
+app.use('*', (req, res) => {
+  res.status(404).json({ message: 'Route not found' });
+});
+
+// Export for Vercel
 module.exports = app;
