@@ -57,6 +57,70 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Demo credentials endpoint
+app.get('/api/demo-credentials', (req, res) => {
+  res.json({
+    message: 'Demo Login Credentials',
+    credentials: [
+      {
+        type: 'Test User',
+        email: 'test@test.com',
+        password: 'test123',
+        role: 'user'
+      },
+      {
+        type: 'Admin User', 
+        email: 'mdmasudul1979@gmail.com',
+        password: 'admin123',
+        role: 'admin'
+      }
+    ],
+    note: 'Use these credentials to test the login functionality'
+  });
+});
+
+// Demo login endpoint (for testing when MongoDB is down)
+app.post('/api/auth/demo-login', (req, res) => {
+  const { email, password } = req.body;
+  
+  // Demo users for testing
+  const demoUsers = [
+    {
+      id: '1',
+      name: 'Test User',
+      email: 'test@test.com',
+      password: 'test123',
+      role: 'user'
+    },
+    {
+      id: '2',
+      name: 'Admin User',
+      email: 'mdmasudul1979@gmail.com',
+      password: 'admin123',
+      role: 'admin'
+    }
+  ];
+  
+  const user = demoUsers.find(u => u.email === email && u.password === password);
+  
+  if (!user) {
+    return res.status(401).json({ message: 'Invalid credentials' });
+  }
+  
+  // For demo purposes, return a simple token
+  const token = `demo-token-${user.id}-${Date.now()}`;
+  
+  res.json({
+    token,
+    user: {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role
+    }
+  });
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
