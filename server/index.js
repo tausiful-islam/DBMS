@@ -10,15 +10,20 @@ const authRoutes = require('./routes/auth');
 
 const app = express();
 
-// Basic CORS middleware
+// Basic CORS middleware - Allow all Vercel domains for demo
 app.use(cors({
-  origin: [
-    'https://meat-supply-server-ee21wvui0-tausifs-projects-09c070a6.vercel.app',  // Latest backend domain
-    'https://meat-market-frontend-q7oh2cz8b-tausifs-projects-09c070a6.vercel.app',  // Current frontend
-    'https://meat-market-frontend-a5qj5xu3v-tausifs-projects-09c070a6.vercel.app',  // Previous frontend
-    'http://localhost:3000',  // Local development
-    /https:\/\/.*\.vercel\.app$/  // Regex pattern for all Vercel apps
-  ],
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    // Allow all vercel.app domains and localhost
+    if (origin.includes('vercel.app') || origin.includes('localhost')) {
+      return callback(null, true);
+    }
+    
+    // Block other origins
+    return callback(new Error('Not allowed by CORS'));
+  },
   credentials: true
 }));
 
