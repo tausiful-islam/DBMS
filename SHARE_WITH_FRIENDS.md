@@ -3,7 +3,7 @@
 ## 🌐 **Live Website URL**
 **Share this link with your friends:**
 ```
-https://meat-market-frontend-7z23fed2r-tausifs-projects-09c070a6.vercel.app
+https://meat-market-frontend-bhuuxajg1-tausifs-projects-09c070a6.vercel.app
 ```
 
 ## 🔑 **Demo Login Credentials**
