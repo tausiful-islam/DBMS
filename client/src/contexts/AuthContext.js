@@ -95,7 +95,8 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
-      const response = await api.post('/auth/login', { email, password });
+      // Try demo login first (for when MongoDB is down)
+      const response = await api.post('/auth/demo-login', { email, password });
       
       api.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
       dispatch({ type: 'LOGIN_SUCCESS', payload: response.data });
@@ -103,10 +104,21 @@ export const AuthProvider = ({ children }) => {
       toast.success('Login successful!');
       return { success: true };
     } catch (error) {
-      const message = error.response?.data?.message || 'Login failed';
-      dispatch({ type: 'SET_ERROR', payload: message });
-      toast.error(message);
-      return { success: false, error: message };
+      // If demo login fails, try regular login as fallback
+      try {
+        const response = await api.post('/auth/login', { email, password });
+        
+        api.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+        dispatch({ type: 'LOGIN_SUCCESS', payload: response.data });
+        
+        toast.success('Login successful!');
+        return { success: true };
+      } catch (fallbackError) {
+        const message = error.response?.data?.message || 'Login failed';
+        dispatch({ type: 'SET_ERROR', payload: message });
+        toast.error(message);
+        return { success: false, error: message };
+      }
     }
   };
 

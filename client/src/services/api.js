@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://meat-supply-server-8w5buwn3k-tausifs-projects-09c070a6.vercel.app/api'  // Latest backend with demo credentials
+  ? 'https://meat-supply-server-558uafd94-tausifs-projects-09c070a6.vercel.app/api'  // Latest backend with demo login
   : 'http://localhost:5000/api';
 
 const api = axios.create({
