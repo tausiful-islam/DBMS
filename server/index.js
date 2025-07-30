@@ -10,20 +10,9 @@ const authRoutes = require('./routes/auth');
 
 const app = express();
 
-// Basic CORS middleware - Allow all Vercel domains for demo
+// Basic CORS middleware - Allow all origins for demo
 app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    
-    // Allow all vercel.app domains and localhost
-    if (origin.includes('vercel.app') || origin.includes('localhost')) {
-      return callback(null, true);
-    }
-    
-    // Block other origins
-    return callback(new Error('Not allowed by CORS'));
-  },
+  origin: true,  // Allow all origins
   credentials: true
 }));
 
