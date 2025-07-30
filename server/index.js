@@ -5,8 +5,8 @@ require('dotenv').config();
 
 // Import routes
 const authRoutes = require('./routes/auth');
-// const dataRoutes = require('./routes/data');
-// const analyticsRoutes = require('./routes/analytics');
+const dataRoutes = require('./routes/data');
+const analyticsRoutes = require('./routes/analytics');
 
 const app = express();
 
@@ -40,8 +40,8 @@ app.get('/', (req, res) => {
 
 // API Routes
 app.use('/api/auth', authRoutes);
-// app.use('/api/data', dataRoutes);
-// app.use('/api/analytics', analyticsRoutes);
+app.use('/api/data', dataRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
