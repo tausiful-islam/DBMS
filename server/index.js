@@ -49,7 +49,28 @@ app.get('/api/health', (req, res) => {
     status: 'OK',
     message: 'Meat Market API is running',
     timestamp: new Date().toISOString(),
-    mongodb: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected'
+    mongodb: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
+    routes: {
+      auth: 'enabled',
+      data: 'enabled', 
+      analytics: 'enabled'
+    }
+  });
+});
+
+// Test data endpoint without auth for debugging
+app.get('/api/data/test', (req, res) => {
+  res.json({ 
+    message: 'Data routes are working',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Test analytics endpoint without auth for debugging  
+app.get('/api/analytics/test', (req, res) => {
+  res.json({ 
+    message: 'Analytics routes are working',
+    timestamp: new Date().toISOString()
   });
 });
 

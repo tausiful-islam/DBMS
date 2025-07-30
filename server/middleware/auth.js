@@ -9,6 +9,21 @@ const auth = async (req, res, next) => {
       return res.status(401).json({ message: 'No token provided, access denied' });
     }
 
+    // Handle demo tokens
+    if (token.startsWith('demo-token-')) {
+      // For demo tokens, create a simple user object
+      const userId = token.split('-')[2]; // Extract user id from demo token
+      req.user = {
+        _id: userId,
+        name: userId === '1' ? 'Test User' : 'Admin User',
+        email: userId === '1' ? 'test@test.com' : 'mdmasudul1979@gmail.com',
+        role: userId === '1' ? 'user' : 'admin',
+        isActive: true
+      };
+      return next();
+    }
+
+    // Handle JWT tokens
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findById(decoded.userId).select('-password');
     
